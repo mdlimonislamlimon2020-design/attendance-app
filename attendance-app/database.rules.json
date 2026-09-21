@@ -1,0 +1,138 @@
+{
+  "rules": {
+    "sessions": {
+      ".read": true,
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+
+    "students": {
+      "$sessionId": {
+        ".read": true,
+        ".write": "root.child('admins').child(auth.uid).val() === true",
+        "$studentId": {
+          ".write": "root.child('admins').child(auth.uid).val() === true || (auth != null && data.child('signedUp').val() !== true && newData.child('signedUp').val() === true && newData.child('sl').val() === data.child('sl').val() && newData.child('reg').val() === data.child('reg').val() && newData.child('name').val() === data.child('name').val() && newData.child('sessionId').val() === data.child('sessionId').val() && newData.child('isCR').val() === data.child('isCR').val())"
+        }
+      }
+    },
+
+    "studentsPrivate": {
+      "$sessionId": {
+        ".read": "root.child('admins').child(auth.uid).val() === true",
+        ".write": "root.child('admins').child(auth.uid).val() === true",
+        "$studentId": {
+          ".read": "root.child('admins').child(auth.uid).val() === true",
+          ".write": "root.child('admins').child(auth.uid).val() === true || (auth != null && !data.exists() && newData.child('uid').val() === auth.uid && newData.child('phone').val() is String && newData.child('guardianPhone').val() is String)"
+        }
+      }
+    },
+
+    "teachers": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      ".indexOn": ["sessionId"]
+    },
+
+    "teachersPrivate": {
+      ".read": "root.child('admins').child(auth.uid).val() === true",
+      "$teacherId": {
+        ".read": "root.child('admins').child(auth.uid).val() === true",
+        ".write": "root.child('admins').child(auth.uid).val() === true"
+      }
+    },
+
+    "teacherAuthMap": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "root.child('admins').child(auth.uid).val() === true"
+      }
+    },
+
+    "classes": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$sessionId": {
+        "$classId": {
+          ".write": "root.child('admins').child(auth.uid).val() === true || (auth != null && newData.exists() && root.child('teacherAuthMap').child(auth.uid).child('sessionId').val() === $sessionId && newData.child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val() && (!data.exists() || data.child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val()))"
+        }
+      }
+    },
+
+    "attendance": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$sessionId": {
+        "$classId": {
+          ".write": "root.child('admins').child(auth.uid).val() === true || (auth != null && root.child('teacherAuthMap').child(auth.uid).child('sessionId').val() === $sessionId && root.child('classes').child($sessionId).child($classId).child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val())"
+        }
+      }
+    },
+
+    "sessionCRs": {
+      "$sessionId": {
+        ".read": "root.child('admins').child(auth.uid).val() === true",
+        "$uid": {
+          ".read": "root.child('admins').child(auth.uid).val() === true",
+          ".write": "root.child('admins').child(auth.uid).val() === true"
+        }
+      }
+    },
+
+    "exams": {
+      ".read": "root.child('admins').child(auth.uid).val() === true",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$sessionId": {
+        ".read": "root.child('admins').child(auth.uid).val() === true || (auth != null && root.child('teacherAuthMap').child(auth.uid).child('sessionId').val() === $sessionId)",
+        "$examId": {
+          ".write": "root.child('admins').child(auth.uid).val() === true || (auth != null && newData.exists() && root.child('teacherAuthMap').child(auth.uid).child('sessionId').val() === $sessionId && newData.child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val() && (!data.exists() || data.child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val()))"
+        }
+      }
+    },
+
+    "examResults": {
+      ".read": "root.child('admins').child(auth.uid).val() === true",
+      ".write": "root.child('admins').child(auth.uid).val() === true",
+      "$sessionId": {
+        "$examId": {
+          ".read": "root.child('admins').child(auth.uid).val() === true || (auth != null && root.child('exams').child($sessionId).child($examId).child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val())",
+          ".write": "root.child('admins').child(auth.uid).val() === true || (auth != null && root.child('exams').child($sessionId).child($examId).child('teacherId').val() === root.child('teacherAuthMap').child(auth.uid).child('teacherId').val())"
+        }
+      }
+    },
+
+    "publishedResults": {
+      "$sessionId": {
+        ".read": "root.child('admins').child(auth.uid).val() === true",
+        "$studentId": {
+          ".read": "root.child('admins').child(auth.uid).val() === true || (auth != null && root.child('studentAuthMap').child(auth.uid).child('sessionId').val() === $sessionId && root.child('studentAuthMap').child(auth.uid).child('studentId').val() === $studentId)",
+          ".write": false
+        }
+      }
+    },
+
+    "notices": {
+      "$sessionId": {
+        ".read": "auth != null",
+        ".write": "root.child('admins').child(auth.uid).val() === true || root.child('sessionCRs').child($sessionId).child(auth.uid).val() === true"
+      }
+    },
+
+    "holidays": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+
+    "studentAuthMap": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "(auth != null && auth.uid === $uid) || root.child('admins').child(auth.uid).val() === true"
+      }
+    },
+
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    }
+  }
+}

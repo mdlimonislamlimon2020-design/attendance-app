@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
+
+/* Class-based dark mode: toggled by adding/removing .dark on <html> (see
+   ThemeContext), instead of following the OS-level color-scheme media query. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Royal Blue — structural + primary actions (was "navy") */
+  --color-navy: #1d4ed8;
+  --color-navy-deep: #1e3a8a;
+  /* Purple — interactive accents, links, focus states (was "teal") */
+  --color-teal: #7c3aed;
+  --color-teal-light: #f3e8ff;
+  /* Lighter purple — special highlights: CR badges, leaderboard, rank #1 (was "gold") */
+  --color-gold: #a855f7;
+  --color-gold-light: #f5edff;
+  --color-paper: #f8fafc;
+  --color-ink: #0f172a;
+  --color-success: #059669;
+  --color-success-light: #d1fae5;
+  --color-danger: #e11d48;
+  --color-danger-light: #ffe4e6;
+
+  --font-display: "Anek Bangla", "Hind Siliguri", sans-serif;
+  --font-body: "Hind Siliguri", "Space Grotesk", sans-serif;
+  --font-data: "Space Grotesk", "Hind Siliguri", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+.dark body {
+  background-color: #0f172a; /* slate-900, matches the dark:bg-slate-900 page wrapper */
+  color: #f1f5f9; /* slate-100 */
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+.font-data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background-color: var(--color-gold-light);
+  color: var(--color-navy-deep);
+}
+
+.dark ::selection {
+  background-color: var(--color-gold);
+  color: var(--color-navy-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
